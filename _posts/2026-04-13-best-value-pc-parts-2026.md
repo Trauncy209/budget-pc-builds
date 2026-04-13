@@ -1,27 +1,10 @@
-from pathlib import Path
-import datetime as dt
-
-base = Path(__file__).resolve().parents[1]
-keywords = [line.strip() for line in (base / 'content' / 'keywords.txt').read_text(encoding='utf-8').splitlines() if line.strip()]
-if not keywords:
-    raise SystemExit('No keywords found')
-idx = dt.date.today().toordinal() % len(keywords)
-keyword = keywords[idx]
-today = dt.date.today().isoformat()
-slug = keyword.lower().replace(' ', '-').replace('/', '-')[:80]
-post = base / '_posts' / f'{today}-{slug}.md'
-if post.exists():
-    print(f'already exists: {post.name}')
-    raise SystemExit(0)
-
-title = keyword.title()
-content = f'''---
+---
 layout: post
-title: "{title}"
-date: {today} 09:00:00 -0400
+title: "Best Value Pc Parts 2026"
+date: 2026-04-13 09:00:00 -0400
 ---
 
-# {title}
+# Best Value Pc Parts 2026
 
 A budget PC build works when every dollar has a job. The goal is not to win parts debates. The goal is to get the best usable performance for the money.
 
@@ -51,6 +34,3 @@ Build for the games and apps you use most, then add storage and cosmetics later 
 - 1 TB SSD
 - Quiet 120mm fan
 - Budget case with decent airflow
-'''
-post.write_text(content, encoding='utf-8')
-print(post)
