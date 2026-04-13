@@ -1,12 +1,12 @@
 from pathlib import Path
 import datetime as dt
+import random
 
 base = Path(__file__).resolve().parents[1]
 keywords = [line.strip() for line in (base / 'content' / 'keywords.txt').read_text(encoding='utf-8').splitlines() if line.strip()]
 if not keywords:
     raise SystemExit('No keywords found')
-idx = dt.date.today().toordinal() % len(keywords)
-keyword = keywords[idx]
+keyword = keywords[dt.date.today().toordinal() % len(keywords)]
 today = dt.date.today().isoformat()
 slug = keyword.lower().replace(' ', '-').replace('/', '-')[:80]
 post = base / '_posts' / f'{today}-{slug}.md'
@@ -14,43 +14,36 @@ if post.exists():
     print(f'already exists: {post.name}')
     raise SystemExit(0)
 
-title = keyword.title()
+openers = [
+    'For a budget build, the best move is usually to stay calm and spend where it matters.',
+    'The cheapest parts are not always the best value.',
+    'A good low-cost PC feels balanced, quiet, and easy to live with.'
+]
+points = [
+    ('Start with the target', 'Decide whether you care about 1080p, 1440p, or productivity first. That decides everything else.'),
+    ('Spend on the GPU, not the fluff', 'A flashy board or case rarely changes the feel of the build. A stronger GPU usually does.'),
+    ('Use decent power and cooling', 'A boring PSU and sensible airflow save more headaches than RGB ever will.')
+]
+lead = random.choice(openers)
+first, second, third = random.sample(points, 3)
 content = f'''---
 layout: post
-title: "{title}"
+title: "{keyword.title()}"
 date: {today} 09:00:00 -0400
 ---
 
-# {title}
+{lead}
 
-A budget PC build works when every dollar has a job. The goal is not to win parts debates. The goal is to get the best usable performance for the money.
+## {first[0]}
+{first[1]}
 
-## Set the target first
-Pick the resolution and refresh rate you actually plan to use. A good 1080p target is often better value than chasing features you do not need.
+## {second[0]}
+{second[1]}
 
-## Put money where it matters
-For most builds, the GPU drives gaming performance, while the CPU only needs to be strong enough to keep up.
+## {third[0]}
+{third[1]}
 
-## Keep the power supply boring
-A good PSU is not exciting, but it is one of the smartest places to avoid problems later.
-
-## Use used parts carefully
-Used GPUs, cases, and storage can save real money. Just make sure the condition and seller history make sense.
-
-## Common mistakes
-- Buying a flashy motherboard instead of a better GPU
-- Overpaying for RAM speed that barely matters
-- Ignoring thermals and noise
-- Skipping the PSU quality check
-
-## Recommended approach
-Build for the games and apps you use most, then add storage and cosmetics later if the budget allows.
-
-## Useful link ideas
-- Quality 650W PSU
-- 1 TB SSD
-- Quiet 120mm fan
-- Budget case with decent airflow
+My rule: if two parts are close in price, pick the one that makes the whole machine easier to use, not the one with the most marketing buzz.
 '''
 post.write_text(content, encoding='utf-8')
 print(post)
