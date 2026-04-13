@@ -13,37 +13,22 @@ post = base / '_posts' / f'{today}-{slug}.md'
 if post.exists():
     print(f'already exists: {post.name}')
     raise SystemExit(0)
-
-openers = [
-    'For a budget build, the best move is usually to stay calm and spend where it matters.',
-    'The cheapest parts are not always the best value.',
-    'A good low-cost PC feels balanced, quiet, and easy to live with.'
+sections = [
+    ('Start with the target', 'Decide whether you are building for 1080p, a quiet office machine, or something with room to upgrade later.'),
+    ('Spend on the right parts', 'The GPU, power supply, cooling, and storage tend to affect the real experience more than cosmetic extras.'),
+    ('Use the whole market', 'New parts, open-box parts, and used parts can all be good buys if you compare them honestly.'),
+    ('What good value looks like', 'A strong value build feels balanced, quiet, and easy to live with instead of flashy for no reason.'),
 ]
-points = [
-    ('Start with the target', 'Decide whether you care about 1080p, 1440p, or productivity first. That decides everything else.'),
-    ('Spend on the GPU, not the fluff', 'A flashy board or case rarely changes the feel of the build. A stronger GPU usually does.'),
-    ('Use decent power and cooling', 'A boring PSU and sensible airflow save more headaches than RGB ever will.')
-]
-lead = random.choice(openers)
-first, second, third = random.sample(points, 3)
-content = f'''---
-layout: post
-title: "{keyword.title()}"
-date: {today} 09:00:00 -0400
----
-
-{lead}
-
-## {first[0]}
-{first[1]}
-
-## {second[0]}
-{second[1]}
-
-## {third[0]}
-{third[1]}
-
-My rule: if two parts are close in price, pick the one that makes the whole machine easier to use, not the one with the most marketing buzz.
-'''
-post.write_text(content, encoding='utf-8')
+lead = random.choice([
+    'Good budget PC advice should make the build easier to use, not harder to justify.',
+    'The best value systems usually look boring on paper but feel great in practice.',
+    'A smart build is the one you can keep enjoying after the excitement of buying parts is gone.'
+])
+body = ['---', 'layout: post', f'title: "{keyword.title()}"', f'date: {today} 09:00:00 -0400', '---', '', lead, '']
+for heading, text in sections:
+    body += [f'## {heading}', text, '']
+body.append('If I were buying today, I would keep the target clear, skip the vanity upgrades, and only spend extra where the build truly improves.')
+post.write_text('
+'.join(body)+'
+', encoding='utf-8')
 print(post)
