@@ -28,7 +28,5 @@ body = ['---', 'layout: post', f'title: "{keyword.title()}"', f'date: {today} 09
 for heading, text in sections:
     body += [f'## {heading}', text, '']
 body.append('If I were buying today, I would keep the target clear, skip the vanity upgrades, and only spend extra where the build truly improves.')
-post.write_text('
-'.join(body)+'
-', encoding='utf-8')
+post.write_text("\n".join(body) + "\n", encoding='utf-8')
 print(post)
