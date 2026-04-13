@@ -1,5 +1,6 @@
 from pathlib import Path
 import datetime as dt
+import json
 import random
 
 base = Path(__file__).resolve().parents[1]
@@ -10,23 +11,67 @@ keyword = keywords[dt.date.today().toordinal() % len(keywords)]
 today = dt.date.today().isoformat()
 slug = keyword.lower().replace(' ', '-').replace('/', '-')[:80]
 post = base / '_posts' / f'{today}-{slug}.md'
+research_file = base / 'research' / 'daily-headlines.json'
+research = json.loads(research_file.read_text(encoding='utf-8')) if research_file.exists() else {}
+headlines = research.get('feeds', {}).get('budget_pc_builds', [])[:5]
 if post.exists():
     print(f'already exists: {post.name}')
     raise SystemExit(0)
-sections = [
-    ('Start with the target', 'Decide whether you are building for 1080p, a quiet office machine, or something with room to upgrade later.'),
-    ('Spend on the right parts', 'The GPU, power supply, cooling, and storage tend to affect the real experience more than cosmetic extras.'),
-    ('Use the whole market', 'New parts, open-box parts, and used parts can all be good buys if you compare them honestly.'),
-    ('What good value looks like', 'A strong value build feels balanced, quiet, and easy to live with instead of flashy for no reason.'),
-]
 lead = random.choice([
-    'Good budget PC advice should make the build easier to use, not harder to justify.',
-    'The best value systems usually look boring on paper but feel great in practice.',
-    'A smart build is the one you can keep enjoying after the excitement of buying parts is gone.'
+    'A good budget PC guide should feel like a shopping list with reasons, not a spec-sheet dump.',
+    'The best builds are balanced: the parts that matter get the money, and the parts that do not get enough to be reliable.',
+    'Budget advice should help a buyer avoid regret, not just chase the cheapest component on the page.'
 ])
-body = ['---', 'layout: post', f'title: "{keyword.title()}"', f'date: {today} 09:00:00 -0400', '---', '', lead, '']
-for heading, text in sections:
-    body += [f'## {heading}', text, '']
-body.append('If I were buying today, I would keep the target clear, skip the vanity upgrades, and only spend extra where the build truly improves.')
+body = [
+    '---',
+    'layout: post',
+    f'title: "{keyword.title()}"',
+    f'date: {today} 09:00:00 -0400',
+    '---',
+    '',
+    lead,
+    '',
+    '## Research snapshot',
+    'A quick hardware feed sweep pointed at these current stories and themes:',
+]
+for headline in headlines:
+    body.append(f'- {headline}')
+body += [
+    '',
+    '## The parts list that actually makes sense',
+    'If you want a machine that feels fast without wasting cash, start with the parts that affect the experience every day. For a 1080p or light 1440p build in 2026, a Ryzen 5 7600, Ryzen 7 7700, Intel Core i5-14400F, or Core i5-14600KF can all make sense depending on the graphics card and the price in front of you. The right answer is not the same for every market, which is why you compare total platform cost rather than a single CPU sticker.',
+    '',
+    '## Recommended CPU tiers',
+    'A practical budget lane usually looks like this: Ryzen 5 7600 for a strong AM5 base, Ryzen 7 7700 if you want a little more headroom for multitasking, Intel Core i5-14400F if the board and bundle pricing are especially good, and Core i5-14600KF only when the price gap is small enough to justify the extra cores. Those chips are not glamorous, but they are the kind of parts people keep using without complaint.',
+    '',
+    '## Motherboard and memory choices',
+    'For AMD, a sensible B650 board with decent VRM cooling, two M.2 slots, and BIOS flashback is usually enough. For Intel, B760 is the value lane if you are not chasing overclocking. In both cases, 32GB of DDR5-6000 CL30 or similar fast-but-not-crazy memory is the sweet spot for a modern gaming and general-use machine. You do not need premium RAM branding to get a fast, stable system.',
+    '',
+    '## GPU decisions by target',
+    'The graphics card is where most budget builds are won or lost. For 1080p, cards like the Radeon RX 7600 or GeForce RTX 4060 can still make sense if the price is right. For 1440p, the Radeon RX 7700 XT, RX 7800 XT, or GeForce RTX 4070 Super are the parts that start to feel properly comfortable. If you are choosing between more VRAM and a little more raw speed, think about the games you actually play and how long you want the card to stay relevant.',
+    '',
+    '## Storage, power, and cooling',
+    'A 1TB Gen4 NVMe SSD is the floor for a modern build, but 2TB is often the smarter buy if the budget can stretch. Power supply quality matters more than most buyers admit; a 650W or 750W 80+ Gold unit from a reputable line is worth it because it keeps the whole machine boring in the best way. For cooling, a Thermalright Peerless Assassin 120 SE, DeepCool AK620, or similar tower cooler can keep a mainstream CPU quiet without turning the case into a noise box.',
+    '',
+    '## Cases that do not sabotage the build',
+    'A cheap case can ruin an otherwise good machine by choking airflow or making cable management miserable. That is why value cases like the Fractal Pop Air, Lian Li Lancool 207, Phanteks XT Pro, or NZXT H5 Flow keep showing up in sensible builds. You want front intake, clear GPU clearance, and enough room for the cooler you actually picked. Pretty is fine. Pretty and breathable is better.',
+    '',
+    '## What the current hardware news means',
+    'The hardware headlines matter because they tell you what to wait for and what to stop waiting for. If Intel Nova Lake rumors and similar leaks say future CPUs are coming with more cores and faster memory support, that does not automatically mean you should hold off on a build today. The better move is to buy when the current price-to-performance ratio is good. Waiting forever for the next release is just a way to avoid enjoying the machine you need now.',
+    '',
+    '## A practical build recipe',
+    'If I were building today, I would do something like this: Ryzen 5 7600 or Core i5-14400F; B650 or B760 board; 32GB DDR5-6000 CL30; 1TB or 2TB NVMe SSD; Radeon RX 7800 XT for the stronger 1440p lane, or RX 7700 XT / RTX 4070 Super depending on pricing; 650W or 750W Gold PSU; and a case with straightforward airflow. That build is not flashy, but it is balanced, easy to upgrade, and much harder to regret than a pile of parts chosen just because they were on sale.',
+    '',
+    '## The rule that saves the most money',
+    'Do not buy parts in isolation. Build around the monitor, the games, the noise level you can tolerate, and the lifespan you want. When those four things are clear, the parts list becomes obvious. That is what value really means.',
+    '',
+    '### Sources used today',
+]
+for headline in headlines:
+    body.append(f'- {headline}')
+body += [
+    '',
+    'The short version: pay for the GPU you will actually use, make the platform stable, and avoid wasting money on cosmetics before performance is sorted.',
+]
 post.write_text("\n".join(body) + "\n", encoding='utf-8')
 print(post)
